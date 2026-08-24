@@ -1,0 +1,113 @@
+{
+  "name": "Randy Matthew",
+  "location": "Jakarta",
+  "phone": "088214630998",
+  "email": "randymtthew@gmail.com",
+  "linkedin": "Randy Matthew",
+  "about": "A motivated and adaptable Information Systems graduate from Universitas Bunda Mulia with experience in IT support, customer service, and web-based project development. Skilled in problem-solving, communication, computer operation, and working in both independent and team environments. Quick to learn new systems and technologies, with strong attention to detail and willingness to grow professionally. Eager to contribute and develop in entry-level positions across administration, operations, IT support, and related fields.",
+  "education": [
+    {
+      "institution": "University of Bunda Mulia",
+      "period": "2020 – 2024",
+      "degree": "Bachelor of Information Systems",
+      "gpa": "3.09",
+      "thesis": "Aplikasi Reservasi Studio Podcast Dengan Metode Extreme Programming (Case Study: PT.Mahaka Radio Digital)"
+    },
+    {
+      "institution": "SMK Yadika 3",
+      "period": "2017 – 2020",
+      "degree": "High School Diploma",
+      "details": [
+        "Fundamentals of programming concepts: logic, data structures, algorithms",
+        "Linux usage: installation, configuration, user management, troubleshooting",
+        "Computer networks: communication protocols, network device management, security configuration"
+      ]
+    }
+  ],
+  "experience": [
+    {
+      "role": "IT Support",
+      "company": "Aston Hotel",
+      "period": "Jan 2019 – Apr 2019",
+      "description": "A renowned hotel chain operating domestically and internationally with high-quality service standards.",
+      "achievements": [
+        "Provided on-site technical support for computer and network issues, ensuring minimal downtime",
+        "Diagnosed and troubleshot hardware, software, and network connectivity issues",
+        "Assisted in setting up and maintaining computer systems, printers, and IT equipment across departments",
+        "Assisted with event preparation: audio-visual equipment setup and IT infrastructure"
+      ]
+    },
+    {
+      "role": "Online Seller (TikTok Shop)",
+      "company": "Self-Employed",
+      "period": "Aug 2025 – Jan 2026",
+      "achievements": [
+        "Sold thrift clothing products through regular TikTok live streaming sessions",
+        "Conducted live product presentations: item details, conditions, pricing",
+        "Interacted with viewers in real-time to increase engagement and sales conversion",
+        "Managed customer orders, packaging, and shipping processes",
+        "Built customer trust through persuasive and responsive communication"
+      ]
+    },
+    {
+      "role": "Freelance Laravel Developer",
+      "company": "Madrona Brands (Upwork)",
+      "period": "May 2026 – Present",
+      "achievements": [
+        "Worked on a Laravel-based internal ERP and analytics platform",
+        "Fixed and troubleshot bugs in a Laravel-based business application",
+        "Collaborated using GitHub and version control workflows",
+        "Tested and validated fixes before deployment"
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "name": "Aplikasi Reservasi Studio Podcast",
+      "type": "Final Thesis Project",
+      "description": "Web-based application to simplify podcast studio reservation process with integrated payment system. Users can book studio time online, select available slots, choose additional facilities, and make payments through a secure platform.",
+      "tech": "Web-based, integrated payment system"
+    }
+  ],
+  "skills": {
+    "technical": [
+      "Business Understanding",
+      "Microsoft Office (Word, Excel, PowerPoint)",
+      "SQL (Basic)",
+      "Laravel",
+      "Git/GitHub",
+      "Linux",
+      "Computer Networks",
+      "Programming Logic & Algorithms"
+    ],
+    "soft": [
+      "Collaborative",
+      "Problem-Solving",
+      "Critical Thinking",
+      "Time Management",
+      "Communication",
+      "Adaptable",
+      "Quick Learner"
+    ],
+    "languages": ["Indonesia", "English"]
+  },
+  "certifications": [
+    {
+      "name": "JavaScript Algorithms and Data Structure",
+      "date": "December 19, 2023"
+    },
+    {
+      "name": "Belajar Machine Learning untuk Pemula",
+      "date": ""
+    }
+  ],
+  "target_roles": [
+    "Administration",
+    "Operations",
+    "IT Support",
+    "Customer Service",
+    "Data Entry",
+    "Back Office",
+    "Junior SQL/Database"
+  ]
+}
