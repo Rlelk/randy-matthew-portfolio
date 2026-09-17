@@ -835,5 +835,36 @@ section{position:relative}
   document.getElementById("year").textContent = new Date().getFullYear();
 })();
 </script>
+<style>
+/* ============ AI CV CHAT WIDGET ============ */
+.cv-chat-launcher{position:fixed;right:24px;bottom:24px;z-index:50;border:1px solid var(--cyan);background:rgba(6,8,11,.94);color:var(--cyan);padding:13px 16px;font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase;box-shadow:0 0 24px rgba(69,230,255,.18);transition:.2s var(--ease)}
+.cv-chat-launcher:hover{background:var(--cyan);color:#04141a;transform:translateY(-2px)}
+.cv-chat-panel{position:fixed;right:24px;bottom:78px;z-index:50;width:min(390px,calc(100vw - 32px));height:min(560px,calc(100vh - 110px));display:none;flex-direction:column;background:rgba(8,11,15,.98);border:1px solid var(--line-strong);box-shadow:0 18px 70px rgba(0,0,0,.55),0 0 28px rgba(69,230,255,.12)}
+.cv-chat-panel.open{display:flex}
+.cv-chat-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line);background:rgba(69,230,255,.04)}
+.cv-chat-head strong{font:12px var(--mono);color:var(--ink);letter-spacing:.1em;text-transform:uppercase}.cv-chat-head small{display:block;margin-top:5px;font:9px var(--mono);color:var(--lime);letter-spacing:.1em}
+.cv-chat-close{border:0;background:none;color:var(--muted);font-size:22px;line-height:1}.cv-chat-close:hover{color:var(--cyan)}
+.cv-chat-messages{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
+.cv-chat-msg{max-width:88%;padding:11px 13px;font:12px/1.6 var(--mono);white-space:pre-wrap;word-break:break-word}.cv-chat-msg.bot{align-self:flex-start;color:var(--ink);background:rgba(69,230,255,.07);border-left:2px solid var(--cyan)}.cv-chat-msg.user{align-self:flex-end;color:#121905;background:var(--lime);border-right:2px solid #fff}
+.cv-chat-form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}.cv-chat-input{min-width:0;flex:1;padding:11px;border:1px solid var(--line-strong);background:rgba(0,0,0,.3);color:var(--ink);font:12px var(--mono);outline:none}.cv-chat-input:focus{border-color:var(--cyan)}.cv-chat-send{border:1px solid var(--cyan);background:rgba(69,230,255,.08);color:var(--cyan);padding:0 14px;font:11px var(--mono)}.cv-chat-send:hover{background:var(--cyan);color:#04141a}.cv-chat-send:disabled{opacity:.5;cursor:wait}
+@media(max-width:600px){.cv-chat-launcher{right:16px;bottom:16px}.cv-chat-panel{right:16px;bottom:68px}}
+</style>
+<button class="cv-chat-launcher" id="cvChatLauncher" type="button" aria-expanded="false" aria-controls="cvChatPanel">Ask Randy's AI ↗</button>
+<section class="cv-chat-panel" id="cvChatPanel" aria-label="AI CV assistant">
+  <header class="cv-chat-head"><div><strong>RM_AI_ASSISTANT</strong><small>CV KNOWLEDGE BASE // ONLINE</small></div><button class="cv-chat-close" id="cvChatClose" type="button" aria-label="Close chat">×</button></header>
+  <div class="cv-chat-messages" id="cvChatMessages" aria-live="polite"><div class="cv-chat-msg bot">Halo! Saya AI assistant Randy. Tanyakan tentang pengalaman, pendidikan, skill, project, atau target posisi.</div></div>
+  <form class="cv-chat-form" id="cvChatForm"><input class="cv-chat-input" id="cvChatInput" maxlength="1000" autocomplete="off" placeholder="Tanya tentang Randy..." aria-label="Your question" required><button class="cv-chat-send" id="cvChatSend" type="submit">SEND</button></form>
+</section>
+<script>
+(function(){
+  "use strict";
+  var endpoint="https://cv-bot-vercel.vercel.app/api/chat";
+  var launcher=document.getElementById("cvChatLauncher"),panel=document.getElementById("cvChatPanel"),close=document.getElementById("cvChatClose"),form=document.getElementById("cvChatForm"),input=document.getElementById("cvChatInput"),send=document.getElementById("cvChatSend"),messages=document.getElementById("cvChatMessages");
+  function addMessage(text,type){var el=document.createElement("div");el.className="cv-chat-msg "+type;el.textContent=text;messages.appendChild(el);messages.scrollTop=messages.scrollHeight;return el;}
+  function setOpen(open){panel.classList.toggle("open",open);launcher.setAttribute("aria-expanded",open?"true":"false");if(open)input.focus();}
+  launcher.addEventListener("click",function(){setOpen(!panel.classList.contains("open"));});close.addEventListener("click",function(){setOpen(false);});
+  form.addEventListener("submit",async function(e){e.preventDefault();var question=input.value.trim();if(!question||send.disabled)return;addMessage(question,"user");input.value="";send.disabled=true;send.textContent="...";var thinking=addMessage("Memproses pertanyaan...","bot");try{var response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:question})});var data=await response.json();thinking.remove();if(!response.ok)throw new Error(data.error||"Request failed");addMessage(data.answer||"Maaf, belum ada jawaban.","bot");}catch(err){thinking.textContent="Maaf, layanan AI sedang tidak tersedia. Coba lagi atau chat via Telegram @Rklek_bot.";}finally{send.disabled=false;send.textContent="SEND";}});
+})();
+</script>
 </body>
 </html>
