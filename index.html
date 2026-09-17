@@ -53,6 +53,7 @@ img,svg{display:block;max-width:100%}
 .bg-scan{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
   background:repeating-linear-gradient(0deg,transparent 0 3px,rgba(255,255,255,.012) 3px 4px);
 }
+.particle-field{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.55}
 .noise{position:fixed;inset:0;z-index:40;pointer-events:none;opacity:.035;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.8'/%3E%3C/svg%3E");
 }
@@ -322,7 +323,36 @@ section{position:relative}
 <a class="skip" href="#main">SKIP TO CONTENT</a>
 <div class="bg-grid"></div>
 <div class="bg-scan"></div>
+<canvas class="particle-field" id="particleField" aria-hidden="true"></canvas>
 <div class="noise"></div>
+
+<script>
+(function(){
+  "use strict";
+  var canvas=document.getElementById("particleField");
+  var ctx=canvas.getContext("2d");
+  var particles=[];
+  var width=0, height=0, reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  function resize(){
+    width=canvas.width=window.innerWidth;
+    height=canvas.height=window.innerHeight;
+    var count=Math.min(70,Math.max(28,Math.floor(width*height/22000)));
+    particles=Array.from({length:count},function(){return {x:Math.random()*width,y:Math.random()*height,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,size:Math.random()*1.5+.5,alpha:Math.random()*.38+.08};});
+  }
+  function draw(){
+    ctx.clearRect(0,0,width,height);
+    particles.forEach(function(p){
+      if(!reduceMotion){p.x+=p.vx;p.y+=p.vy;}
+      if(p.x<0)p.x=width;if(p.x>width)p.x=0;if(p.y<0)p.y=height;if(p.y>height)p.y=0;
+      ctx.globalAlpha=p.alpha;ctx.fillStyle="#45e6ff";ctx.fillRect(p.x,p.y,p.size,p.size);
+    });
+    ctx.globalAlpha=1;
+    if(!reduceMotion) requestAnimationFrame(draw);
+  }
+  window.addEventListener("resize",resize,{passive:true});
+  resize();draw();
+})();
+</script>
 
 <!-- ============ TOP BAR ============ -->
 <header class="topbar">
@@ -836,24 +866,54 @@ section{position:relative}
 })();
 </script>
 <style>
-/* ============ AI CV CHAT WIDGET ============ */
-.cv-chat-launcher{position:fixed;right:24px;bottom:24px;z-index:50;border:1px solid var(--cyan);background:rgba(6,8,11,.94);color:var(--cyan);padding:13px 16px;font:11px var(--mono);letter-spacing:.12em;text-transform:uppercase;box-shadow:0 0 24px rgba(69,230,255,.18);transition:.2s var(--ease)}
-.cv-chat-launcher:hover{background:var(--cyan);color:#04141a;transform:translateY(-2px)}
-.cv-chat-panel{position:fixed;right:24px;bottom:78px;z-index:50;width:min(390px,calc(100vw - 32px));height:min(560px,calc(100vh - 110px));display:none;flex-direction:column;background:rgba(8,11,15,.98);border:1px solid var(--line-strong);box-shadow:0 18px 70px rgba(0,0,0,.55),0 0 28px rgba(69,230,255,.12)}
+/* ============ CYBERPUNK TERMINAL CV_ASSISTANT WIDGET ============ */
+.cv-chat-launcher{position:fixed;right:24px;bottom:24px;z-index:50;border:1px solid var(--cyan);background:rgba(6,10,14,.95);color:var(--cyan);padding:12px 18px;font:11px var(--mono);letter-spacing:.14em;text-transform:uppercase;box-shadow:0 0 20px rgba(69,230,255,.2);display:flex;align-items:center;gap:10px;transition:.22s var(--ease)}
+.cv-chat-launcher::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--lime);box-shadow:0 0 8px var(--lime);animation:pulse 1.4s infinite alternate}
+.cv-chat-launcher:hover{background:var(--cyan);color:#04141a;transform:translateY(-2px);box-shadow:0 0 30px rgba(69,230,255,.4)}
+.cv-chat-panel{position:fixed;right:24px;bottom:80px;z-index:50;width:min(420px,calc(100vw - 32px));height:min(580px,calc(100vh - 115px));display:none;flex-direction:column;background:rgba(7,11,16,.98);border:1px solid rgba(69,230,255,.35);box-shadow:0 20px 80px rgba(0,0,0,.8),0 0 35px rgba(69,230,255,.15);backdrop-filter:blur(10px)}
+.cv-chat-panel::before{content:"";position:absolute;top:-1px;left:-1px;width:12px;height:12px;border-top:2px solid var(--cyan);border-left:2px solid var(--cyan);pointer-events:none}
+.cv-chat-panel::after{content:"";position:absolute;bottom:-1px;right:-1px;width:12px;height:12px;border-bottom:2px solid var(--lime);border-right:2px solid var(--lime);pointer-events:none}
 .cv-chat-panel.open{display:flex}
-.cv-chat-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line);background:rgba(69,230,255,.04)}
-.cv-chat-head strong{font:12px var(--mono);color:var(--ink);letter-spacing:.1em;text-transform:uppercase}.cv-chat-head small{display:block;margin-top:5px;font:9px var(--mono);color:var(--lime);letter-spacing:.1em}
-.cv-chat-close{border:0;background:none;color:var(--muted);font-size:22px;line-height:1}.cv-chat-close:hover{color:var(--cyan)}
-.cv-chat-messages{flex:1;overflow:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
-.cv-chat-msg{max-width:88%;padding:11px 13px;font:12px/1.6 var(--mono);white-space:pre-wrap;word-break:break-word}.cv-chat-msg.bot{align-self:flex-start;color:var(--ink);background:rgba(69,230,255,.07);border-left:2px solid var(--cyan)}.cv-chat-msg.user{align-self:flex-end;color:#121905;background:var(--lime);border-right:2px solid #fff}
-.cv-chat-form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}.cv-chat-input{min-width:0;flex:1;padding:11px;border:1px solid var(--line-strong);background:rgba(0,0,0,.3);color:var(--ink);font:12px var(--mono);outline:none}.cv-chat-input:focus{border-color:var(--cyan)}.cv-chat-send{border:1px solid var(--cyan);background:rgba(69,230,255,.08);color:var(--cyan);padding:0 14px;font:11px var(--mono)}.cv-chat-send:hover{background:var(--cyan);color:#04141a}.cv-chat-send:disabled{opacity:.5;cursor:wait}
-@media(max-width:600px){.cv-chat-launcher{right:16px;bottom:16px}.cv-chat-panel{right:16px;bottom:68px}}
+.cv-chat-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(69,230,255,.2);background:rgba(69,230,255,.06)}
+.cv-chat-title{font:700 12px var(--mono);color:var(--ink);letter-spacing:.12em;display:flex;align-items:center;gap:8px}
+.cv-chat-title b{color:var(--lime)}
+.cv-chat-badge{font:9px var(--mono);color:var(--cyan);border:1px solid rgba(69,230,255,.4);padding:2px 6px;letter-spacing:.1em;text-transform:uppercase}
+.cv-chat-close{border:none;background:none;color:var(--muted);font:16px var(--mono);padding:2px 6px;cursor:pointer}
+.cv-chat-close:hover{color:var(--cyan)}
+.cv-chat-messages{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.cv-chat-msg{max-width:88%;padding:10px 12px;font:12px/1.55 var(--mono);white-space:pre-wrap;word-break:break-word}
+.cv-chat-msg.bot{align-self:flex-start;color:#d8eff5;background:rgba(69,230,255,.06);border-left:2px solid var(--cyan);border-bottom:1px solid rgba(69,230,255,.1)}
+.cv-chat-msg.user{align-self:flex-end;color:#0c1402;background:var(--lime);font-weight:700;border-right:2px solid #fff}
+.cv-chat-msg.system{align-self:center;font-size:10px;color:var(--faint);border:none;background:none;padding:4px}
+.cv-chat-quick{padding:8px 12px;display:flex;gap:6px;flex-wrap:wrap;background:rgba(4,7,10,.85);border-top:1px solid rgba(69,230,255,.1)}
+.cv-quick-btn{background:rgba(255,255,255,.02);border:1px solid rgba(69,230,255,.2);color:var(--cyan);font:10px var(--mono);padding:4px 8px;cursor:pointer;letter-spacing:.05em}
+.cv-quick-btn:hover{border-color:var(--lime);color:var(--lime);background:rgba(216,255,62,.06)}
+.cv-chat-form{display:flex;border-top:1px solid rgba(69,230,255,.2);background:rgba(3,5,8,.95)}
+.cv-chat-input{min-width:0;flex:1;padding:12px 14px;background:transparent;border:none;color:#fff;font:12px var(--mono);outline:none}
+.cv-chat-input::placeholder{color:#495e67}
+.cv-chat-send{border:none;border-left:1px solid rgba(69,230,255,.25);background:rgba(69,230,255,.1);color:var(--cyan);padding:0 16px;font:11px var(--mono);letter-spacing:.1em;cursor:pointer}
+.cv-chat-send:hover{background:var(--cyan);color:#04141a}
+.cv-chat-send:disabled{opacity:.4;cursor:wait}
+@media(max-width:600px){.cv-chat-launcher{right:16px;bottom:16px}.cv-chat-panel{right:16px;bottom:70px}}
 </style>
-<button class="cv-chat-launcher" id="cvChatLauncher" type="button" aria-expanded="false" aria-controls="cvChatPanel">Ask Randy's AI ↗</button>
-<section class="cv-chat-panel" id="cvChatPanel" aria-label="AI CV assistant">
-  <header class="cv-chat-head"><div><strong>RM_AI_ASSISTANT</strong><small>CV KNOWLEDGE BASE // ONLINE</small></div><button class="cv-chat-close" id="cvChatClose" type="button" aria-label="Close chat">×</button></header>
-  <div class="cv-chat-messages" id="cvChatMessages" aria-live="polite"><div class="cv-chat-msg bot">Halo! Saya AI assistant Randy. Tanyakan tentang pengalaman, pendidikan, skill, project, atau target posisi.</div></div>
-  <form class="cv-chat-form" id="cvChatForm"><input class="cv-chat-input" id="cvChatInput" maxlength="1000" autocomplete="off" placeholder="Tanya tentang Randy..." aria-label="Your question" required><button class="cv-chat-send" id="cvChatSend" type="submit">SEND</button></form>
+<button class="cv-chat-launcher" id="cvChatLauncher" type="button" aria-expanded="false" aria-controls="cvChatPanel">TERMINAL // CV_ASSISTANT ↗</button>
+<section class="cv-chat-panel" id="cvChatPanel" aria-label="AI CV Terminal Assistant">
+  <header class="cv-chat-head">
+    <div class="cv-chat-title"><b>RM_AI</b> // TERMINAL <span class="cv-chat-badge">ONLINE</span></div>
+    <button class="cv-chat-close" id="cvChatClose" type="button" aria-label="Close terminal">[ESC]</button>
+  </header>
+  <div class="cv-chat-messages" id="cvChatMessages" aria-live="polite">
+    <div class="cv-chat-msg bot">// NEURAL_CV_LINK ESTABLISHED\nHalo! Saya asisten cerdas Randy Matthew. Tanyakan apa saja tentang skill, pengalaman, pendidikan, atau project saya.</div>
+  </div>
+  <div class="cv-chat-quick">
+    <button class="cv-quick-btn" type="button" data-q="Skill teknis apa saja yang dikuasai Randy?">⚡ Skills</button>
+    <button class="cv-quick-btn" type="button" data-q="Apa pengalaman kerja Randy di Aston Hotel & TikTok?">⚡ Experience</button>
+    <button class="cv-quick-btn" type="button" data-q="Ceritakan tentang project reservasi podcast studio!">⚡ Podcast App</button>
+  </div>
+  <form class="cv-chat-form" id="cvChatForm">
+    <input class="cv-chat-input" id="cvChatInput" maxlength="1000" autocomplete="off" placeholder="Ketik perintah / pertanyaan..." aria-label="Your command or question" required>
+    <button class="cv-chat-send" id="cvChatSend" type="submit">TRANSMIT</button>
+  </form>
 </section>
 <script>
 (function(){
@@ -863,7 +923,25 @@ section{position:relative}
   function addMessage(text,type){var el=document.createElement("div");el.className="cv-chat-msg "+type;el.textContent=text;messages.appendChild(el);messages.scrollTop=messages.scrollHeight;return el;}
   function setOpen(open){panel.classList.toggle("open",open);launcher.setAttribute("aria-expanded",open?"true":"false");if(open)input.focus();}
   launcher.addEventListener("click",function(){setOpen(!panel.classList.contains("open"));});close.addEventListener("click",function(){setOpen(false);});
-  form.addEventListener("submit",async function(e){e.preventDefault();var question=input.value.trim();if(!question||send.disabled)return;addMessage(question,"user");input.value="";send.disabled=true;send.textContent="...";var thinking=addMessage("Memproses pertanyaan...","bot");try{var response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:question})});var data=await response.json();thinking.remove();if(!response.ok)throw new Error(data.error||"Request failed");addMessage(data.answer||"Maaf, belum ada jawaban.","bot");}catch(err){thinking.textContent="Maaf, layanan AI sedang tidak tersedia. Coba lagi atau chat via Telegram @Rklek_bot.";}finally{send.disabled=false;send.textContent="SEND";}});
+  document.querySelectorAll(".cv-quick-btn").forEach(function(btn){
+    btn.addEventListener("click",function(){input.value=btn.getAttribute("data-q");submitQuestion(btn.getAttribute("data-q"));});
+  });
+  async function submitQuestion(question){
+    if(!question||send.disabled)return;
+    addMessage(question,"user");input.value="";send.disabled=true;send.textContent="...";
+    var thinking=addMessage("// PROCESSING_NEURAL_QUERY...","bot");
+    try{
+      var res=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({message:question})});
+      var data=await res.json();thinking.remove();
+      if(!res.ok)throw new Error(data.error||"Transmission failed");
+      addMessage(data.answer||"// NO_RESPONSE_RETURNED","bot");
+    }catch(err){
+      thinking.textContent="// LINK_TIMEOUT: Layanan AI sementara tidak tersedia. Coba lagi atau chat via Telegram @Rklek_bot";
+    }finally{
+      send.disabled=false;send.textContent="TRANSMIT";
+    }
+  }
+  form.addEventListener("submit",function(e){e.preventDefault();submitQuestion(input.value.trim());});
 })();
 </script>
 </body>
